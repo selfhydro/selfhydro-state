@@ -6,7 +6,6 @@ resource_types:
       repository: ljfranklin/terraform-resource
       tag: latest
 
-
 resources:
   - name: selfhydro-state
     type: git
@@ -51,7 +50,6 @@ resources:
                 "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
                 "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/concourse-deployment%40selfhydro-197504.iam.gserviceaccount.com"
               }
-
   - name: terraform
     type: terraform
     source:
