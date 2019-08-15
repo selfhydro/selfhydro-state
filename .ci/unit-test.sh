@@ -2,6 +2,9 @@
 
 set -ex
 
+export GOPATH=$PWD
+mkdir bin
+mkdir src
 cd ./selfhydro-state
 go get
 go test -cover | tee test_coverage.txt
