@@ -1,0 +1,7 @@
+fileignoreconfig:
+- filename: state/.ci/pipeline.yml
+  checksum: 718208edb1a37617252414fee993e1e333c7bca21f8e3e4e511cab992cc3b2ad
+  ignore_detectors: []
+- filename: state/infra/main.tf
+  checksum: f6881080cc22d613b0014455df9039e6aa188de98927c37f0631e047c8a69499
+  ignore_detectors: []

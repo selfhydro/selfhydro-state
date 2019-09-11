@@ -7,19 +7,8 @@ import (
 	"os"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	log.Print("Hello world received a request.")
-	target := os.Getenv("TARGET")
-	if target == "" {
-		target = "World"
-	}
-	fmt.Fprintf(w, "Hello %s!\n", target)
-}
-
 func main() {
-	log.Print("Hello world sample started.")
-
-	http.HandleFunc("/", handler)
+	http.HandleFunc("/currentTemperature", getTemperatureHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {

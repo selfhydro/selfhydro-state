@@ -37,3 +37,13 @@ resource "google_cloud_run_service" "selfhydro-state" {
 	   }
   }
 }
+
+data "google_iam_policy" "public-access" {
+  binding {
+    role = "roles/run.invoker"
+
+    members = [
+      "allUsers",
+    ]
+  }
+}
