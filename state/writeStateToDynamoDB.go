@@ -67,6 +67,9 @@ func createStateItem(state SeflhydroState) map[string]*dynamodb.AttributeValue {
 		AmbientTemperture: state.AmbientTemperature,
 		Date:              state.Time,
 	}
+	if itemState.SystemID == "" {
+		itemState.SystemID = "selfhydro-default"
+	}
 	ao, err := dynamodbattribute.MarshalMap(itemState)
 	if err != nil {
 		fmt.Println("Got error marshalling new state:")
