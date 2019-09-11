@@ -45,7 +45,7 @@ resources:
         credentials: ((gcpServiceAccount.json))
       backend_config:
         bucket: selfhydro-infra-state
-        prefix: selfhydro-state-db
+        prefix: selfhydro-state-state
         credentials: ((gcpServiceAccount.json))
 
   - name: gcs-artifact-bucket
