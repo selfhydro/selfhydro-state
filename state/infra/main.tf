@@ -1,4 +1,5 @@
 provider "google" {
+  credentials = "${var.credentials}"
   project = "selfhydro-197504"
   region  = "us-central1"
   zone    = "us-central1-c"
@@ -37,4 +38,10 @@ output "aws_access_key" {
 output "aws_secret_key" {
   value = "${var.aws_secret_key}"
   sensitive = true
+}
+
+output "gcp_credentials" {
+  value       = google.credentials
+  description = "The credentials for authenticating with gcp."
+  sensitive   = true
 }

@@ -41,13 +41,12 @@ resources:
     type: terraform
     source:
       backend_type: gcs
+      vars:
+        credentials: ((gcpServiceAccount.json))
       backend_config:
         bucket: selfhydro-infra-state
         prefix: selfhydro-state-db
         credentials: ((gcpServiceAccount.json))
-      vars:
-        aws_access_key: ((aws_access.key))
-        aws_secret_key: ((aws_secret.key))
 
   - name: gcs-artifact-bucket
     type: google-cloud-storage
@@ -101,6 +100,9 @@ jobs:
           terraform_source: selfhydro-state/state/infra
           env_name: prod
           plan_only: true
+          vars:
+            aws_access_key: ((aws_access.key))
+            aws_secret_key: ((aws_secret.key))
   - name: terraform-apply
     plan:
       - get: selfhydro-state
@@ -113,3 +115,6 @@ jobs:
           terraform_source: selfhydro-state/state/infra
           env_name: prod
           plan_run: true
+          vars:
+            aws_access_key: ((aws_access.key))
+            aws_secret_key: ((aws_secret.key))
