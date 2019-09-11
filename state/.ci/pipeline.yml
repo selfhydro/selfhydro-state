@@ -75,7 +75,7 @@ jobs:
       - get: selfhydro-state
         trigger: true
       - task: unit-test
-        file: selfhydro/state/.ci/unit-test.yml
+        file: selfhydro-state/state/.ci/unit-test.yml
   - name: build
     plan:
       - get: selfhydro-state
@@ -83,8 +83,8 @@ jobs:
         passed: [test]
       - get: version
         params: {bump: patch}
-      - task: build
-        file: selfhydro-state/state/.ci/build.yml
+      - task: archive
+        file: selfhydro-state/state/.ci/archive.yml
       - put: gcs-artifact-bucket
         params:
           file: release/selfhydro-state-release.zip

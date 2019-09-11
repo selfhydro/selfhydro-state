@@ -5,3 +5,6 @@ fileignoreconfig:
 - filename: state/infra/main.tf
   checksum: f6881080cc22d613b0014455df9039e6aa188de98927c37f0631e047c8a69499
   ignore_detectors: []
+- filename: state/go.sum
+  checksum: d91ba009ddaf4cffaadd00604786333bde1100eceb6f1bc0c25564e99a0dbcaa
+  ignore_detectors: []

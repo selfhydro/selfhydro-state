@@ -15,4 +15,4 @@ outputs:
 - name: release
 
 run:
-  path: selfhydro-state/state/.ci/build.sh
+  path: selfhydro-state/state/.ci/archive.sh
