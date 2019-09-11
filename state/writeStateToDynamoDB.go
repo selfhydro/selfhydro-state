@@ -35,11 +35,12 @@ type StateItem struct {
 	SystemID          string
 }
 
-func TransferStateToDynamoDB(ctx context.Context, m PubSubMessage) {
+func TransferStateToDynamoDB(ctx context.Context, m PubSubMessage) error {
 	session := createSession()
 	selfhydroState := deseraliseState(m.Data)
 	stateItem := createStateItem(selfhydroState)
 	insertStateItem(session, stateItem)
+	return nil
 }
 
 func createSession() *dynamodb.DynamoDB {

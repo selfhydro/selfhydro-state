@@ -45,7 +45,7 @@ resources:
         credentials: ((gcpServiceAccount.json))
       backend_config:
         bucket: selfhydro-infra-state
-        prefix: selfhydro-state-state
+        prefix: selfhydro-state-to-dynamodb
         credentials: ((gcpServiceAccount.json))
 
   - name: gcs-artifact-bucket
