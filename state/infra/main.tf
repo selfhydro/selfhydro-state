@@ -8,8 +8,6 @@ provider "google" {
 locals {
   function_name = "selfhydro-state-release"
   function_md5 = filemd5("../../../${var.function-local-directory}")
-  //  append the app hash to the filename as a temporary workaround for https://github.com/terraform-providers/terraform-provider-google/issues/1938
-  filename_on_gcs = "${local.function_name}-${lower(replace(base64encode(data.archive_file.function_dist.output_md5), "=", ""))}.zip"
 }
 
 resource "google_storage_bucket" "bucket" {
@@ -17,6 +15,7 @@ resource "google_storage_bucket" "bucket" {
 }
 
 resource "google_storage_bucket_object" "archive" {
+  //  append the app hash to the filename as a temporary workaround for https://github.com/terraform-providers/terraform-provider-google/issues/1938
   name   = "${local.function_name}-${lower(replace(base64encode(local.function_md5), "=", ""))}.zip"
   bucket = "${google_storage_bucket.bucket.name}"
   source = "../../../${var.function-local-directory}"
