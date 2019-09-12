@@ -70,7 +70,7 @@ func createStateItem(state SeflhydroState) map[string]*dynamodb.AttributeValue {
 	if itemState.SystemID == "" {
 		itemState.SystemID = "selfhydro-default"
 	}
-	log.Printf("inserting state, with temperture %f for device %s", itemState.AmbientTemperture, itemState.SystemID)
+	log.Printf("created state, with temperture %f for device %s", itemState.AmbientTemperture, itemState.SystemID)
 	ao, err := dynamodbattribute.MarshalMap(itemState)
 	if err != nil {
 		fmt.Println("Got error marshalling new state:")
@@ -81,7 +81,8 @@ func createStateItem(state SeflhydroState) map[string]*dynamodb.AttributeValue {
 }
 
 func insertStateItem(dynamodbSession *dynamodb.DynamoDB, stateItem map[string]*dynamodb.AttributeValue) {
-	tableName := getTableName(time.Now())
+	tableName := getTableName(time.Now().UTC())
+	log.Printf("inserting state into table %s", tableName)
 	input := &dynamodb.PutItemInput{
 		Item:      stateItem,
 		TableName: aws.String(tableName),
