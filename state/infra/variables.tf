@@ -9,3 +9,7 @@ variable "aws_secret_key" {
 variable "credentials" {
   default = ""
 }
+
+variable "function-local-directory" {
+  default = ""
+}

@@ -5,6 +5,23 @@ provider "google" {
   zone    = "us-central1-c"
 }
 
+locals {
+  function_name = "selfhydro-state-release"
+  function_md5 = filemd5("../../../${var.function-local-directory}")
+  //  append the app hash to the filename as a temporary workaround for https://github.com/terraform-providers/terraform-provider-google/issues/1938
+  filename_on_gcs = "${local.function_name}-${lower(replace(base64encode(data.archive_file.function_dist.output_md5), "=", ""))}.zip"
+}
+
+resource "google_storage_bucket" "bucket" {
+  name = "cloud_function_source"
+}
+
+resource "google_storage_bucket_object" "archive" {
+  name   = "${local.function_name}-${lower(replace(base64encode(local.function_md5), "=", ""))}.zip"
+  bucket = "${google_storage_bucket.bucket.name}"
+  source = "../../../${var.function-local-directory}"
+}
+
 resource "google_cloudfunctions_function" "TransferStateToDynamoDB" {
   name                  = "TransferStateToDynamoDB"
   region                = "us-central1"
@@ -21,8 +38,8 @@ resource "google_cloudfunctions_function" "TransferStateToDynamoDB" {
     resource      = "telemetry-topic"
   }
 
-  source_archive_bucket = "selfhydro-build-artifacts"
-  source_archive_object = "selfhydro-state-release.zip"
+  source_archive_bucket = "${google_storage_bucket.bucket.name}"
+  source_archive_object = "${google_storage_bucket_object.archive.name}"
 
   environment_variables = {
     AWS_ACCESS_KEY_ID = "${var.aws_access_key}"
