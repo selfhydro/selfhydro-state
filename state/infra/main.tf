@@ -11,7 +11,7 @@ locals {
 }
 
 resource "google_storage_bucket" "bucket" {
-  name = "cloud_function_source"
+  name = "selfhydro_cloud_function_source"
 }
 
 resource "google_storage_bucket_object" "archive" {
