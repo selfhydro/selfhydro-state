@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/currentTemperature", getTemperatureHandler)
+	http.HandleFunc("/api/ambientTemperature", getTemperatureHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {
