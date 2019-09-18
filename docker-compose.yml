@@ -1,0 +1,19 @@
+version: "3.7"
+services:
+  selfhydro-state:
+    container_name: selfhydro-state
+    build:
+      context: .
+    depends_on:
+      - dynamodb
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000"]
+  dynamodb:
+    container_name: state-dynamodb
+    image: amazon/dynamodb-local
+    ports:
+      - "8000:8000"
