@@ -11,9 +11,7 @@ type AmbientTemperature struct {
 }
 
 func getTemperatureHandler(w http.ResponseWriter, r *http.Request) {
-	ambientTemperature := &AmbientTemperature{
-		DeviceID:    "selfhydro",
-		Temperature: 12.1,
-	}
+	stateRepository := NewStateRepository()
+	ambientTemperature := stateRepository.GetAmbientTemperature("selfhydro")
 	json.NewEncoder(w).Encode(ambientTemperature)
 }
