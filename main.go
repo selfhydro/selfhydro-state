@@ -20,7 +20,7 @@ func main() {
 		port = "8080"
 	}
 	handler := cors.New(cors.Options{
-		AllowedOrigins: []string{"https://selfhydro.com"},
+		AllowedOrigins: []string{"https://selfhydro.com", "https://www.selfhydro.com"},
 	}).Handler(r)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), handler))
 }

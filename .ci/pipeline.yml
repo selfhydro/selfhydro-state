@@ -87,6 +87,8 @@ jobs:
     plan:
       - get: selfhydro-state
         trigger: true
+        passed: [build]
+      - get: version
       - put: terraform
         params:
           var_files: [selfhydro-state/infra/prod.tfvars]
@@ -97,8 +99,9 @@ jobs:
     plan:
       - get: selfhydro-state
         passed: [terraform-plan]
+      - get: version
       - get: terraform
-        trigger: false
+        trigger: true
         passed: [terraform-plan]
       - put: terraform
         params:
