@@ -35,12 +35,12 @@ resource "google_cloud_run_service" "selfhydro-state" {
     containers {
       image = "${var.cloud_run_image}:${file("../../version/version")}"
       env {
-          name  = "AWS_ACCESS_KEY_ID",
+          name  = "AWS_ACCESS_KEY_ID"
           value = "${var.aws_access_key}"
         }
 
       env {
-          name  = "AWS_SECRET_ACCESS_KEY",
+          name  = "AWS_SECRET_ACCESS_KEY"
           value = "${var.aws_secret_key}"
         }
     }
