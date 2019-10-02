@@ -44,6 +44,9 @@ func (stateRepository StateRepository) GetAmbientTemperature(systemID string) Am
 		ProjectionExpression:   aws.String("AmbientTemperature, Date"),
 	}
 	queryOutput, _ := stateRepository.DynamoDB.Query(query)
+	if len(queryOutput.Items) == 0 {
+		return AmbientTemperature{}
+	}
 	temperature, _ := strconv.ParseFloat(*queryOutput.Items[0]["AmbientTemperature"].N, 64)
 	ambientTemperature := AmbientTemperature{
 		Temperature: temperature,

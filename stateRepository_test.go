@@ -33,17 +33,27 @@ func (c *MockDynamoDB) Query(input *dynamodb.QueryInput) (*dynamodb.QueryOutput,
 		return &dynamodb.QueryOutput{
 			Items: items,
 		}, nil
-	} else {
-		fmt.Printf("KeyConditionExpression: %s and TableName: %s", *input.KeyConditionExpression, *input.TableName)
 	}
-	return nil, nil
+	return &dynamodb.QueryOutput{
+		Items: []map[string]*dynamodb.AttributeValue{},
+	}, nil
 }
 
-func Test_ShouldGetAmbientTemperature(t *testing.T) {
-	stateRepository := &StateRepository{
-		DynamoDB: &MockDynamoDB{},
-	}
-	ambientTempeture := stateRepository.GetAmbientTemperature("selfhydro")
-	assert.Equal(t, float64(12), ambientTempeture.Temperature)
-	assert.Equal(t, "selfhydro", ambientTempeture.DeviceID)
+func Test_GetAmbientTemperature(t *testing.T) {
+	t.Run("ShouldGetAmbientTemperatureWhenThereIsAtLeastOneTempValue", func(t *testing.T) {
+		stateRepository := &StateRepository{
+			DynamoDB: &MockDynamoDB{},
+		}
+		ambientTempeture := stateRepository.GetAmbientTemperature("selfhydro")
+		assert.Equal(t, float64(12), ambientTempeture.Temperature)
+		assert.Equal(t, "selfhydro", ambientTempeture.DeviceID)
+	})
+
+	t.Run("ShouldReturnNilWhenThereIsNoAmbientTemperatureForDevice", func(t *testing.T) {
+		stateRepository := &StateRepository{
+			DynamoDB: &MockDynamoDB{},
+		}
+		ambientTempeture := stateRepository.GetAmbientTemperature("nothing")
+		assert.Equal(t, float64(0), ambientTempeture.Temperature)
+	})
 }
