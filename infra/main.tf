@@ -34,6 +34,10 @@ resource "google_cloud_run_service" "selfhydro-state" {
   spec {
     containers {
 	     image = "${var.cloud_run_image}:${file("../../version/version")}"
+       env {
+         AWS_ACCESS_KEY_ID = "${var.aws_access_key}"
+         AWS_SECRET_ACCESS_KEY = "${var.aws_secret_key}"
+       }
 	   }
   }
 }
@@ -46,4 +50,14 @@ data "google_iam_policy" "public-access" {
       "allUsers",
     ]
   }
+}
+
+output "aws_access_key" {
+  value = "${var.aws_access_key}"
+  sensitive = true
+}
+
+output "aws_secret_key" {
+  value = "${var.aws_secret_key}"
+  sensitive = true
 }
