@@ -1,8 +1,8 @@
 provider "google" {
   credentials = "${var.credentials}"
-  project = "${var.project_id}"
-  region  = "${var.region}"
-  zone    = "us-central1-c"
+  project     = "${var.project_id}"
+  region      = "${var.region}"
+  zone        = "us-central1-c"
 }
 
 provider "google-beta" {
@@ -33,12 +33,17 @@ resource "google_cloud_run_service" "selfhydro-state" {
 
   spec {
     containers {
-	     image = "${var.cloud_run_image}:${file("../../version/version")}"
-       env {
-         AWS_ACCESS_KEY_ID = "${var.aws_access_key}"
-         AWS_SECRET_ACCESS_KEY = "${var.aws_secret_key}"
-       }
-	   }
+      image = "${var.cloud_run_image}:${file("../../version/version")}"
+      env = [
+        {
+          "name"  = "AWS_ACCESS_KEY_ID",
+          "value" = "${var.aws_access_key}"
+        },
+        {
+          "name"  = "AWS_SECRET_ACCESS_KEY",
+          "value" = "${var.aws_secret_key}"
+      }]
+    }
   }
 }
 
@@ -53,11 +58,11 @@ data "google_iam_policy" "public-access" {
 }
 
 output "aws_access_key" {
-  value = "${var.aws_access_key}"
+  value     = "${var.aws_access_key}"
   sensitive = true
 }
 
 output "aws_secret_key" {
-  value = "${var.aws_secret_key}"
+  value     = "${var.aws_secret_key}"
   sensitive = true
 }
