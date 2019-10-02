@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"time"
 
@@ -36,6 +37,7 @@ func getTableName(time time.Time) string {
 }
 
 func (stateRepository StateRepository) GetAmbientTemperature(systemID string) AmbientTemperature {
+	log.Printf("getting ambient temperature for %s device", systemID)
 	tableName := getTableName(time.Now().UTC())
 	condition := fmt.Sprintf("SystemID = %s", systemID)
 	query := &dynamodb.QueryInput{
@@ -43,11 +45,17 @@ func (stateRepository StateRepository) GetAmbientTemperature(systemID string) Am
 		KeyConditionExpression: aws.String(condition),
 		ProjectionExpression:   aws.String("AmbientTemperature, Date"),
 	}
-	queryOutput, _ := stateRepository.DynamoDB.Query(query)
+	queryOutput, err := stateRepository.DynamoDB.Query(query)
+	if err != nil {
+		log.Printf("could not query dynamo for ambient temperature: %s", err.Error())
+	}
 	if len(queryOutput.Items) == 0 {
 		return AmbientTemperature{}
 	}
-	temperature, _ := strconv.ParseFloat(*queryOutput.Items[0]["AmbientTemperature"].N, 64)
+	temperature, err := strconv.ParseFloat(*queryOutput.Items[0]["AmbientTemperature"].N, 64)
+	if err != nil {
+		log.Printf("could not parse ambient temperature to float: %s", err.Error())
+	}
 	ambientTemperature := AmbientTemperature{
 		Temperature: temperature,
 		DeviceID:    systemID,
