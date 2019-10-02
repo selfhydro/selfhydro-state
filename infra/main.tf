@@ -33,7 +33,7 @@ resource "google_cloud_run_service" "selfhydro-state" {
 
   spec {
     containers {
-	     image = "${var.cloud_run_image}:${file("/version/version")}"
+	     image = "${var.cloud_run_image}:${file("../../version/version")}"
 	   }
   }
 }
