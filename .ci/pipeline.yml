@@ -68,26 +68,10 @@ jobs:
         trigger: true
       - task: unit-test
         file: selfhydro-state/.ci/unit-test.yml
-  - name: build
+  - name: validate-infra
     plan:
       - get: selfhydro-state
         trigger: true
-        passed: [test]
-      - get: version
-        params: {bump: patch}
-      - put: selfhydro-state-image
-        params:
-          build: selfhydro-state/
-          tag_file: version/version
-          tag_as_latest: true
-      - put: version
-        params: {file: version/version}
-
-  - name: terraform-plan
-    plan:
-      - get: selfhydro-state
-        trigger: true
-        passed: [build]
       - get: version
       - put: terraform
         params:
@@ -98,20 +82,33 @@ jobs:
           vars:
             aws_access_key: ((aws_access.key))
             aws_secret_key: ((aws_secret.key))
-  - name: terraform-apply
+  - name: build
     plan:
       - get: selfhydro-state
         trigger: true
-        passed: [terraform-plan]
+        passed: [test, validate-infra]
+      - get: version
+        params: {bump: patch}
+      - put: selfhydro-state-image
+        params:
+          build: selfhydro-state/
+          tag_file: version/version
+          tag_as_latest: true
+      - put: version
+        params: {file: version/version}
+
+  - name: deploy
+    plan:
+      - get: selfhydro-state
+        trigger: true
+        passed: [build]
       - get: version
       - get: terraform
-        passed: [terraform-plan]
       - put: terraform
         params:
           var_files: [selfhydro-state/infra/prod.tfvars]
           terraform_source: selfhydro-state/infra
           env_name: prod
-          plan_run: true
           vars:
             aws_access_key: ((aws_access.key))
             aws_secret_key: ((aws_secret.key))
