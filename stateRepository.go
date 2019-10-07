@@ -42,14 +42,12 @@ func (stateRepository StateRepository) GetAmbientTemperature(systemID string) Am
 	condition := fmt.Sprintf("SystemID = %s", systemID)
 
 	query := &dynamodb.QueryInput{
-		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
-			":v1": {
-				S: aws.String("Date"),
-			},
+		ExpressionAttributeNames: map[string]*string{
+			"#D": aws.String("Date"),
 		},
 		TableName:              aws.String(tableName),
 		KeyConditionExpression: aws.String(condition),
-		ProjectionExpression:   aws.String("AmbientTemperature, :v1"),
+		ProjectionExpression:   aws.String("AmbientTemperature, #D"),
 	}
 	queryOutput, err := stateRepository.DynamoDB.Query(query)
 	if err != nil {
