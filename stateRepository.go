@@ -38,23 +38,22 @@ func getTableName(time time.Time) string {
 func (stateRepository StateRepository) GetAmbientTemperature(systemID string) AmbientTemperature {
 	log.Printf("getting ambient temperature for %s device", systemID)
 	tableName := getTableName(time.Now().UTC())
-
-	query := &dynamodb.QueryInput{
-		ExpressionAttributeNames: map[string]*string{
-			"#D": aws.String("Date"),
+	query := &dynamodb.QueryInput{}
+	query.SetTableName(tableName)
+	query.SetExpressionAttributeNames(map[string]*string{
+		"#D": aws.String("Date"),
+	})
+	query.SetProjectionExpression("AmbientTemperature, #D")
+	query.SetExpressionAttributeValues(map[string]*dynamodb.AttributeValue{
+		":s1": {
+			S: aws.String(systemID),
 		},
-		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
-			":s1": {
-				S: aws.String(systemID),
-			},
-			":d1": {
-				S: aws.String(time.Now().Add(time.Duration(-4) * time.Hour).Format("20060102150405")),
-			},
+		":d1": {
+			S: aws.String(time.Now().Add(time.Duration(-4) * time.Hour).Format("20060102150405")),
 		},
-		TableName:              aws.String(tableName),
-		KeyConditionExpression: aws.String("SystemID = :s1 AND Date > :d1"),
-		ProjectionExpression:   aws.String("AmbientTemperature, #D"),
-	}
+	})
+	query.SetKeyConditionExpression("SystemID = :s1 AND Date > :d1")
+	log.Printf("querying dynamo with %s", query.GoString())
 	queryOutput, err := stateRepository.DynamoDB.Query(query)
 	if err != nil {
 		log.Printf("could not query dynamo for ambient temperature: %s", err.Error())
