@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -39,14 +38,18 @@ func getTableName(time time.Time) string {
 func (stateRepository StateRepository) GetAmbientTemperature(systemID string) AmbientTemperature {
 	log.Printf("getting ambient temperature for %s device", systemID)
 	tableName := getTableName(time.Now().UTC())
-	condition := fmt.Sprintf("SystemID = %s", systemID)
 
 	query := &dynamodb.QueryInput{
 		ExpressionAttributeNames: map[string]*string{
 			"#D": aws.String("Date"),
 		},
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":s1": {
+				S: aws.String(systemID),
+			},
+		},
 		TableName:              aws.String(tableName),
-		KeyConditionExpression: aws.String(condition),
+		KeyConditionExpression: aws.String("SystemID = :s1"),
 		ProjectionExpression:   aws.String("AmbientTemperature, #D"),
 	}
 	queryOutput, err := stateRepository.DynamoDB.Query(query)

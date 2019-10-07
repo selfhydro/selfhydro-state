@@ -29,7 +29,7 @@ func (c *MockDynamoDB) Query(input *dynamodb.QueryInput) (*dynamodb.QueryOutput,
 		},
 	}
 	items = append(items, state1)
-	if *input.KeyConditionExpression == "SystemID = selfhydro" && *input.TableName == tableName {
+	if *input.KeyConditionExpression == "SystemID = :s1" && *input.TableName == tableName && *input.ExpressionAttributeValues[":s1"].S == "selfhydro" {
 		return &dynamodb.QueryOutput{
 			Items: items,
 		}, nil
