@@ -47,9 +47,12 @@ func (stateRepository StateRepository) GetAmbientTemperature(systemID string) Am
 			":s1": {
 				S: aws.String(systemID),
 			},
+			"d1": {
+				S: aws.String(time.Now().Add(time.Duration(-4) * time.Hour).Format("20060102150405")),
+			},
 		},
 		TableName:              aws.String(tableName),
-		KeyConditionExpression: aws.String("SystemID = :s1"),
+		KeyConditionExpression: aws.String("SystemID = :s1 AND Data > :d1"),
 		ProjectionExpression:   aws.String("AmbientTemperature, #D"),
 	}
 	queryOutput, err := stateRepository.DynamoDB.Query(query)

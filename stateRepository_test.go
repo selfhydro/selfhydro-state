@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 
@@ -29,7 +30,7 @@ func (c *MockDynamoDB) Query(input *dynamodb.QueryInput) (*dynamodb.QueryOutput,
 		},
 	}
 	items = append(items, state1)
-	if *input.KeyConditionExpression == "SystemID = :s1" && *input.TableName == tableName && *input.ExpressionAttributeValues[":s1"].S == "selfhydro" {
+	if strings.Contains(*input.KeyConditionExpression, "SystemID = :s1") && *input.TableName == tableName && *input.ExpressionAttributeValues[":s1"].S == "selfhydro" {
 		return &dynamodb.QueryOutput{
 			Items: items,
 		}, nil
