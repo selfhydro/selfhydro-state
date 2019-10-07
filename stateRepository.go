@@ -52,7 +52,7 @@ func (stateRepository StateRepository) GetAmbientTemperature(systemID string) Am
 			S: aws.String(time.Now().Add(time.Duration(-4) * time.Hour).Format("20060102150405")),
 		},
 	})
-	query.SetKeyConditionExpression("SystemID = :s1 AND Date > :d1")
+	query.SetKeyConditionExpression("SystemID = :s1 AND #D > :d1")
 	log.Printf("querying dynamo with %s", query.GoString())
 	queryOutput, err := stateRepository.DynamoDB.Query(query)
 	if err != nil {
