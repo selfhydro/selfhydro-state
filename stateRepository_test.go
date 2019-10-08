@@ -25,7 +25,7 @@ func (c *MockDynamoDB) Query(input *dynamodb.QueryInput) (*dynamodb.QueryOutput,
 		"SystemID": &dynamodb.AttributeValue{
 			S: aws.String("selfhydro"),
 		},
-		"AmbientTemperature": &dynamodb.AttributeValue{
+		"WaterTemperature": &dynamodb.AttributeValue{
 			N: aws.String("12"),
 		},
 	}
@@ -45,7 +45,7 @@ func Test_GetAmbientTemperature(t *testing.T) {
 		stateRepository := &StateRepository{
 			DynamoDB: &MockDynamoDB{},
 		}
-		ambientTempeture := stateRepository.GetAmbientTemperature("selfhydro")
+		ambientTempeture := stateRepository.GetWaterTemperature("selfhydro")
 		assert.Equal(t, float64(12), ambientTempeture.Temperature)
 		assert.Equal(t, "selfhydro", ambientTempeture.DeviceID)
 	})
@@ -54,7 +54,7 @@ func Test_GetAmbientTemperature(t *testing.T) {
 		stateRepository := &StateRepository{
 			DynamoDB: &MockDynamoDB{},
 		}
-		ambientTempeture := stateRepository.GetAmbientTemperature("nothing")
+		ambientTempeture := stateRepository.GetWaterTemperature("nothing")
 		assert.Equal(t, float64(0), ambientTempeture.Temperature)
 	})
 }

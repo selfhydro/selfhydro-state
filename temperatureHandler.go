@@ -6,14 +6,14 @@ import (
 	"net/http"
 )
 
-type AmbientTemperature struct {
+type WaterTemperature struct {
 	DeviceID    string  `json:"deviceID"`
 	Temperature float64 `json:"temperature"`
 }
 
 func getTemperatureHandler(w http.ResponseWriter, r *http.Request) {
 	stateRepository := NewStateRepository()
-	log.Print("received request for ambient temperature")
-	ambientTemperature := stateRepository.GetAmbientTemperature("selfhydro")
-	json.NewEncoder(w).Encode(ambientTemperature)
+	log.Print("received request for water temperature")
+	waterTemperature := stateRepository.GetWaterTemperature("selfhydro")
+	json.NewEncoder(w).Encode(waterTemperature)
 }
