@@ -18,7 +18,7 @@ type MockDynamoDB struct {
 }
 
 func (c *MockDynamoDB) Query(input *dynamodb.QueryInput) (*dynamodb.QueryOutput, error) {
-	time := time.Now().Format("2006-01-02")
+	time := time.Now().Format("2006-01")
 	tableName := fmt.Sprintf("selfhydro-state-%s", time)
 	items := []map[string]*dynamodb.AttributeValue{}
 	state1 := map[string]*dynamodb.AttributeValue{
@@ -30,7 +30,7 @@ func (c *MockDynamoDB) Query(input *dynamodb.QueryInput) (*dynamodb.QueryOutput,
 		},
 	}
 	items = append(items, state1)
-	if strings.Contains(*input.KeyConditionExpression, "SystemID = :s1") && *input.TableName == tableName && *input.ExpressionAttributeValues[":s1"].S == "selfhydro" {
+	if strings.Contains(*input.KeyConditionExpression, "#system_id = :s1") && *input.TableName == tableName && *input.ExpressionAttributeValues[":s1"].S == "selfhydro" {
 		return &dynamodb.QueryOutput{
 			Items: items,
 		}, nil

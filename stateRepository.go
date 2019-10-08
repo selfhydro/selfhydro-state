@@ -32,7 +32,7 @@ func (stateRepostiroy *StateRepository) createSession() {
 
 func getTableName(time time.Time) string {
 	baseName := "selfhydro-state-"
-	return baseName + time.Format("2006-01-02")
+	return baseName + time.Format("2006-01")
 }
 
 func (stateRepository StateRepository) GetAmbientTemperature(systemID string) AmbientTemperature {
@@ -41,9 +41,10 @@ func (stateRepository StateRepository) GetAmbientTemperature(systemID string) Am
 	query := &dynamodb.QueryInput{}
 	query.SetTableName(tableName)
 	query.SetExpressionAttributeNames(map[string]*string{
-		"#D": aws.String("Date"),
+		"#system_id": aws.String("SystemID"),
+		"#date":      aws.String("Date"),
 	})
-	query.SetProjectionExpression("AmbientTemperature, #D")
+	query.SetProjectionExpression("AmbientTemperature, #d")
 	query.SetExpressionAttributeValues(map[string]*dynamodb.AttributeValue{
 		":s1": {
 			S: aws.String(systemID),
@@ -52,7 +53,7 @@ func (stateRepository StateRepository) GetAmbientTemperature(systemID string) Am
 			S: aws.String(time.Now().Add(time.Duration(-4) * time.Hour).Format("20060102150405")),
 		},
 	})
-	query.SetKeyConditionExpression("SystemID = :s1 AND #D > :d1")
+	query.SetKeyConditionExpression("#system_id = :s1 AND #date > :d1")
 	log.Printf("querying dynamo with %s", query.GoString())
 	queryOutput, err := stateRepository.DynamoDB.Query(query)
 	if err != nil {
