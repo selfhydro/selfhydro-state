@@ -98,5 +98,5 @@ func insertStateItem(dynamodbSession *dynamodb.DynamoDB, stateItem map[string]*d
 
 func getTableName(time time.Time) string {
 	baseName := "selfhydro-state-"
-	return baseName + time.Format("2006-01-02")
+	return baseName + time.Format("2006-01")
 }
