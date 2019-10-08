@@ -30,9 +30,9 @@ type SeflhydroState struct {
 }
 
 type StateItem struct {
-	AmbientTemperture float64
-	Date              string
-	SystemID          string
+	WaterTemperature float64
+	Date             string
+	SystemID         string
 }
 
 func TransferStateToDynamoDB(ctx context.Context, m PubSubMessage) error {
@@ -63,14 +63,14 @@ func deseraliseState(data []byte) SeflhydroState {
 
 func createStateItem(state SeflhydroState) map[string]*dynamodb.AttributeValue {
 	itemState := StateItem{
-		SystemID:          state.deviceId,
-		AmbientTemperture: state.AmbientTemperature,
-		Date:              state.Time,
+		SystemID:         state.deviceId,
+		WaterTemperature: state.WaterTemperature,
+		Date:             state.Time,
 	}
 	if itemState.SystemID == "" {
 		itemState.SystemID = "selfhydro-default"
 	}
-	log.Printf("created state, with temperture %f for device %s", itemState.AmbientTemperture, itemState.SystemID)
+	log.Printf("created state, with temperture %f for device %s", itemState.WaterTemperature, itemState.SystemID)
 	ao, err := dynamodbattribute.MarshalMap(itemState)
 	if err != nil {
 		fmt.Println("Got error marshalling new state:")
