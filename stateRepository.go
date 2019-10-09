@@ -44,13 +44,13 @@ func (stateRepository StateRepository) GetWaterTemperature(systemID string) Wate
 		"#system_id": aws.String("SystemID"),
 		"#date":      aws.String("Date"),
 	})
-	query.SetProjectionExpression("WaterTemperature, #d")
+	query.SetProjectionExpression("WaterTemperature, #date")
 	query.SetExpressionAttributeValues(map[string]*dynamodb.AttributeValue{
 		":s1": {
 			S: aws.String(systemID),
 		},
 		":d1": {
-			S: aws.String(time.Now().Add(time.Duration(-4) * time.Hour).Format("20060102150405")),
+			S: aws.String(time.Now().Add(time.Duration(-4) * time.Hour).Format("200601021504")),
 		},
 	})
 	query.SetKeyConditionExpression("#system_id = :s1 AND #date > :d1")

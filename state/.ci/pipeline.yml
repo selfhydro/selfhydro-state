@@ -90,34 +90,17 @@ jobs:
           acl: private
       - put: version
         params: {file: version/version}
-  - name: terraform-plan
-    plan:
-      - get: selfhydro-state
-        trigger: true
-        passed: [build]
-      - get: gcs-artifact-bucket
-      - put: terraform
-        params:
-          terraform_source: selfhydro-state/state/infra
-          env_name: prod
-          plan_only: true
-          vars:
-            aws_access_key: ((aws_access.key))
-            aws_secret_key: ((aws_secret.key))
-            function-local-directory: "gcs-artifact-bucket/selfhydro-state-release.zip"
   - name: terraform-apply
     plan:
       - get: selfhydro-state
         trigger: true
-        passed: [terraform-plan]
+        passed: [build]
       - get: terraform
-        passed: [terraform-plan]
       - get: gcs-artifact-bucket
       - put: terraform
         params:
           terraform_source: selfhydro-state/state/infra
           env_name: prod
-          plan_run: true
           vars:
             aws_access_key: ((aws_access.key))
             aws_secret_key: ((aws_secret.key))
