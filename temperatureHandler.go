@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 )
 
 type WaterTemperature struct {
@@ -11,9 +13,19 @@ type WaterTemperature struct {
 	Temperature float64 `json:"temperature"`
 }
 
-func getTemperatureHandler(w http.ResponseWriter, r *http.Request) {
+func getWaterTemperatureHandler(w http.ResponseWriter, r *http.Request) {
+	systemID := getParameter(r.URL, "systemid")
 	stateRepository := NewStateRepository()
 	log.Print("received request for water temperature")
-	waterTemperature := stateRepository.GetWaterTemperature("selfhydro")
+	waterTemperature := stateRepository.GetWaterTemperature(systemID)
 	json.NewEncoder(w).Encode(waterTemperature)
+}
+
+func getParameter(url *url.URL, key string) string {
+	parameter, ok := url.Query()[key]
+	if !ok {
+		return ""
+	}
+	fmt.Println(parameter)
+	return parameter[0]
 }

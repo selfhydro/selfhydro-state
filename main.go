@@ -13,7 +13,7 @@ import (
 func main() {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/api/ambientTemperature", getTemperatureHandler)
+	r.HandleFunc("/api/waterTemperature", getWaterTemperatureHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {
