@@ -28,6 +28,9 @@ func (c *MockDynamoDB) Query(input *dynamodb.QueryInput) (*dynamodb.QueryOutput,
 		"WaterTemperature": &dynamodb.AttributeValue{
 			N: aws.String("12"),
 		},
+		"Date": &dynamodb.AttributeValue{
+			S: aws.String("20191018132904"),
+		},
 	}
 	items = append(items, state1)
 	if strings.Contains(*input.KeyConditionExpression, "#system_id = :s1") && *input.TableName == tableName && *input.ExpressionAttributeValues[":s1"].S == "selfhydro" {
@@ -40,21 +43,29 @@ func (c *MockDynamoDB) Query(input *dynamodb.QueryInput) (*dynamodb.QueryOutput,
 	}, nil
 }
 
-func Test_GetAmbientTemperature(t *testing.T) {
-	t.Run("ShouldGetAmbientTemperatureWhenThereIsAtLeastOneTempValue", func(t *testing.T) {
+func Test_GetWaterTemperature(t *testing.T) {
+	t.Run("ShouldGetWaterTemperatureWhenThereIsAtLeastOneTempValue", func(t *testing.T) {
 		stateRepository := &StateRepository{
 			DynamoDB: &MockDynamoDB{},
 		}
-		ambientTempeture := stateRepository.GetWaterTemperature("selfhydro")
-		assert.Equal(t, float64(12), ambientTempeture.Temperature)
-		assert.Equal(t, "selfhydro", ambientTempeture.DeviceID)
+		waterTempeture := stateRepository.GetWaterTemperature("selfhydro")
+		assert.Equal(t, float64(12), waterTempeture.Temperature)
+		assert.Equal(t, "selfhydro", waterTempeture.DeviceID)
 	})
 
-	t.Run("ShouldReturnNilWhenThereIsNoAmbientTemperatureForDevice", func(t *testing.T) {
+	t.Run("ShouldReturnNilWhenThereIsNowaterTemperatureForDevice", func(t *testing.T) {
 		stateRepository := &StateRepository{
 			DynamoDB: &MockDynamoDB{},
 		}
-		ambientTempeture := stateRepository.GetWaterTemperature("nothing")
-		assert.Equal(t, float64(0), ambientTempeture.Temperature)
+		waterTempeture := stateRepository.GetWaterTemperature("nothing")
+		assert.Equal(t, float64(0), waterTempeture.Temperature)
+	})
+
+	t.Run("ShouldGetTimestampOfReadingWhenGettingWaterTemperture", func(t *testing.T) {
+		stateRepository := &StateRepository{
+			DynamoDB: &MockDynamoDB{},
+		}
+		waterTemperture := stateRepository.GetWaterTemperature("selfhydro")
+		assert.Equal(t, time.Date(2019, 10, 18, 13, 29, 04, 00, time.UTC), waterTemperture.Time)
 	})
 }

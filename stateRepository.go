@@ -38,6 +38,31 @@ func getTableName(time time.Time) string {
 func (stateRepository StateRepository) GetWaterTemperature(systemID string) WaterTemperature {
 	log.Printf("getting water temperature for %s device", systemID)
 	tableName := getTableName(time.Now().UTC())
+	query := stateRepository.createWaterTemperatureQuery(tableName, systemID)
+	queryOutput, err := stateRepository.DynamoDB.Query(query)
+	if err != nil {
+		log.Printf("could not query dynamodb for water temperature: %s", err.Error())
+	}
+	if len(queryOutput.Items) == 0 {
+		return WaterTemperature{}
+	}
+	temperature, err := strconv.ParseFloat(*queryOutput.Items[0]["WaterTemperature"].N, 64)
+	if err != nil {
+		log.Printf("could not parse water temperature to float: %s", err.Error())
+	}
+	timestamp, err := time.Parse("20060102150405", *queryOutput.Items[0]["Date"].S)
+	if err != nil {
+		log.Printf("could not parse water temperture timestamp to time struct: %s", err.Error())
+	}
+	ambientTemperature := WaterTemperature{
+		Temperature: temperature,
+		DeviceID:    systemID,
+		Time:        timestamp,
+	}
+	return ambientTemperature
+}
+
+func (stateRepository StateRepository) createWaterTemperatureQuery(tableName string, systemID string) *dynamodb.QueryInput {
 	query := &dynamodb.QueryInput{}
 	query.SetTableName(tableName)
 	query.SetExpressionAttributeNames(map[string]*string{
@@ -50,25 +75,9 @@ func (stateRepository StateRepository) GetWaterTemperature(systemID string) Wate
 			S: aws.String(systemID),
 		},
 		":d1": {
-			S: aws.String(time.Now().Add(time.Duration(-4) * time.Hour).Format("200601021504")),
+			S: aws.String(time.Now().Add(time.Duration(-1) * time.Hour).Format("200601021504")),
 		},
 	})
 	query.SetKeyConditionExpression("#system_id = :s1 AND #date > :d1")
-	log.Printf("querying dynamo with %s", query.GoString())
-	queryOutput, err := stateRepository.DynamoDB.Query(query)
-	if err != nil {
-		log.Printf("could not query dynamodb for water temperature: %s", err.Error())
-	}
-	if len(queryOutput.Items) == 0 {
-		return WaterTemperature{}
-	}
-	temperature, err := strconv.ParseFloat(*queryOutput.Items[0]["WaterTemperature"].N, 64)
-	if err != nil {
-		log.Printf("could not parse water temperature to float: %s", err.Error())
-	}
-	ambientTemperature := WaterTemperature{
-		Temperature: temperature,
-		DeviceID:    systemID,
-	}
-	return ambientTemperature
+	return query
 }
