@@ -12,7 +12,7 @@ import (
 type WaterTemperature struct {
 	DeviceID    string    `json:"deviceID"`
 	Temperature float64   `json:"temperature"`
-	Time        time.Time `json:"timeStamp"`
+	Timestamp   time.Time `json:"timestamp"`
 }
 
 func getWaterTemperatureHandler(w http.ResponseWriter, r *http.Request) {

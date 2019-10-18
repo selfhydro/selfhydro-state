@@ -57,7 +57,7 @@ func (stateRepository StateRepository) GetWaterTemperature(systemID string) Wate
 	ambientTemperature := WaterTemperature{
 		Temperature: temperature,
 		DeviceID:    systemID,
-		Time:        timestamp,
+		Timestamp:   timestamp,
 	}
 	return ambientTemperature
 }

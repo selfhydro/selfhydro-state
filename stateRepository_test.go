@@ -66,6 +66,6 @@ func Test_GetWaterTemperature(t *testing.T) {
 			DynamoDB: &MockDynamoDB{},
 		}
 		waterTemperture := stateRepository.GetWaterTemperature("selfhydro")
-		assert.Equal(t, time.Date(2019, 10, 18, 13, 29, 04, 00, time.UTC), waterTemperture.Time)
+		assert.Equal(t, time.Date(2019, 10, 18, 13, 29, 04, 00, time.UTC), waterTemperture.Timestamp)
 	})
 }
